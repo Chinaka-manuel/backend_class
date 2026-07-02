@@ -174,8 +174,6 @@ export const updateUser = async (req, res) =>{
             })
         }
 
-     
-
         res.status(200).json({
             status: "success",
             message: `User with the email: ${email} updated successfully`,
@@ -197,7 +195,7 @@ export const deleteUser = async (req,res) =>{
     try{
         const {email} = req.params;
 
-        const user = await User.findOneAndDelete({email});
+        const user = await User.findOneAndDelete({email: email.toLowerCase()});
         if(!user){
              res.status(404).json({
             status: "failed",
