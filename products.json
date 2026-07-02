@@ -1,0 +1,23 @@
+[
+  {
+    "id": "1",
+    "image": "iduhfeufhu",
+    "name": "Nokia",
+    "color": "black",
+    "price": "$5000"
+  },
+  {
+    "id": "2",
+    "image": "iduhfeufhu333",
+    "name": "Samsung x24",
+    "color": "white",
+    "price": "$7000"
+  },
+  {
+    "id": "3",
+    "image": "iduhfeufhu",
+    "name": "Nokia 3310",
+    "color": "black",
+    "price": "$9000"
+  }
+]
