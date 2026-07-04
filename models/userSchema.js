@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 import validator from "validator"
+import bcrypt from "bcrypt"
 
 // create a variable that will hold the schema
 let userSchema = new mongoose.Schema({
@@ -31,9 +32,13 @@ let userSchema = new mongoose.Schema({
 
     password: {
         type: String,
-        minLength: 6,
-         validate: {
-            validator:function(value){
+        required: [true, "Password field is required"],
+        minLength: [6, "Password must be at least 6 characters long"],
+        validate: {
+            validator: function(value) {
+                if (!value) return false;
+                if (value.startsWith("$2")) return true;
+
                 return validator.isStrongPassword(value, {
                     minLength: 6,
                     minLowercase: 1,
@@ -49,12 +54,30 @@ let userSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+
+     isVerified: {
+        type: Boolean,
+        default: false
+    },
+    verificationToken: {
+        type: String
     }
 
-}, {
+}, 
+{
     timestamps: true
-});
+}
+);
 
+userSchema.pre("save", async function() {
+    if (!this.isModified("password")) return;  //do not encrypt the password if the password has not been modified
+
+    if (this.password.startsWith("$2")) return; //do not encrypt the pawssword if the password starts with "$2"
+
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+});
 
 // create a model from the schema
 // it is a convention to use capital letters for the variable name of the model

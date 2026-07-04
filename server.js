@@ -1,16 +1,14 @@
-import express from "express"
 import dotenv from "dotenv"
-import userRouter from "./routes/userRoutes.js"
-import productsRouter from "./routes/productsRoutes.js"
-import morgan from "morgan"
-import connect from "./utils/db.js"
-
-
 
 dotenv.config({
     path: "./.env"
 })
 
+import express from "express"
+import userRouter from "./routes/userRoutes.js"
+import productsRouter from "./routes/productsRoutes.js"
+import morgan from "morgan"
+import connect from "./utils/db.js"
 
 const app = express();
 // this is used to retrieve or parse the data in the request body

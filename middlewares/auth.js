@@ -1,39 +1,37 @@
 import jwt from 'jsonwebtoken'
 import { User } from '../models/userSchema.js';
 
-const auth = async (req, res, next) =>{
-    // create a tiken from the request headers
-  const token = req.headers.authorization.split(" ")[1];
+const auth = async (req, res, next) => {
+    const authHeader = req.headers.authorization;
 
-//   return an error response if token does not exist 
-if(!token){
-    return res.status(403).json({
-        status: "failed",
-        message: "authorization token not found "
-    })
-}
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({
+            status: 'failed',
+            message: 'authorization token not found'
+        })
+    }
 
-// verify the token using jwt
-const verified = jwt.verify(token, process.env.JWT_SECRET)
+    const token = authHeader.split(' ')[1];
 
-// find the verified user
-const user = await User.findById(verified.id)
+    try {
+        const verified = jwt.verify(token, process.env.JWT_SECRET)
+        const user = await User.findById(verified.id)
 
-// check if verified user with the token exist, retuen an error if not 
-if(!user){
-    return res.status(404).json({
-        status: "failed",
-        message: "unauthorized"
-    })
-}
+        if (!user) {
+            return res.status(404).json({
+                status: 'failed',
+                message: 'unauthorized'
+            })
+        }
 
-// make the requested user to be qual to the verified user 
-
-req.user = user;
-
-next()
-
-
+        req.user = user;
+        next()
+    } catch (error) {
+        return res.status(401).json({
+            status: 'failed',
+            message: 'invalid or expired token'
+        })
+    }
 }
 
 export default auth;
